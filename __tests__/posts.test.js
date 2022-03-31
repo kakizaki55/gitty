@@ -35,7 +35,7 @@ describe('gitty routes', () => {
       .send({ text: 'yoyo im kaing a tweet' })
       .then((res) => {
         expect(res.body).toEqual({
-          id: '1',
+          id: expect.any(String),
           text: 'yoyo im kaing a tweet',
           username: 'fake_github_user',
         });
