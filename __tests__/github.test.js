@@ -3,7 +3,7 @@ const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
 
-// jest.mock('../lib/utils/github');
+jest.mock('../lib/utils/github');
 
 describe('gitty routes', () => {
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe('gitty routes', () => {
   afterAll(() => {
     pool.end();
   });
-  it.only('should redirect to the github oauth page upon login', async () => {
+  it('should redirect to the github oauth page upon login', async () => {
     const req = await request(app).get('/api/v1/github/login');
 
     expect(req.header.location).toMatch(
@@ -21,7 +21,7 @@ describe('gitty routes', () => {
     );
   });
 
-  it('should login and redirect users to /api/v1/github/post', async () => {
+  it.only('should login and redirect users to /api/v1/github/post', async () => {
     const req = await request
       .agent(app)
       .get('/api/v1/github/login/callback?code=42')
