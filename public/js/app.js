@@ -37,7 +37,7 @@ function renderIsLoggedIn(user) {
     const fd = new FormData(event.target);
     const text = fd.get('text');
 
-    fetch('/api/v1/post', {
+    fetch('/api/v1/posts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
