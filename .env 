@@ -1,0 +1,8 @@
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres
+API_URL=http://localhost
+PORT=7890
+COOKIE_NAME=session
+JWT_SECRET=secret
+CLIENT_ID=d94a558a399bc1df878
+CLIENT_SECRET=102c6dbe423a9471179bad34e843143f05f46450
+REDIRECT_URI=http://localhost:7890/api/v1/github/login/callback
