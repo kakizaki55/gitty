@@ -41,4 +41,24 @@ describe('gitty routes', () => {
         });
       });
   });
+  it('gets a list of all the gittys', async () => {
+    await GithubUser.insert({
+      username: 'fake_github_user',
+      avatar: 'https://www.placecage.com/gif/300/300',
+    });
+
+    await request(app)
+      .post('/api/v1/posts')
+      .send({ text: 'here is another test gitty' });
+
+    const response = await request(app).get('/api/v1/posts');
+
+    expect(response.body).toEqual([
+      {
+        id: expect.any(String),
+        text: 'here is another test gitty',
+        username: 'fake_github_user',
+      },
+    ]);
+  });
 });

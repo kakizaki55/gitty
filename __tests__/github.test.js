@@ -19,6 +19,7 @@ describe('gitty routes', () => {
   afterAll(() => {
     pool.end();
   });
+
   it('should redirect to the github oauth page upon login', async () => {
     const req = await request(app).get('/api/v1/github/login');
 
