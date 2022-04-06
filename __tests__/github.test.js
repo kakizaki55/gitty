@@ -29,18 +29,14 @@ describe('gitty routes', () => {
   });
 
   it('should login and redirect users to /api/v1/posts', async () => {
-    const req = await request
+    const res = await request
       .agent(app)
       .get('/api/v1/github/login/callback?code=42')
       .redirects(1);
 
-    expect(req.body).toEqual({
-      username: 'fake_github_user',
-      email: 'not-real@example.com',
-      avatar: expect.any(String),
-      iat: expect.any(Number),
-      exp: expect.any(Number),
-    });
+    console.log('req.location', res.redirects);
+
+    expect(res.redirects[0]).toContain(`/api/v1/posts`);
   });
   it('deletes user on the delete route for user', async () => {
     const agent = request.agent(app);
