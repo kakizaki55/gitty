@@ -2,8 +2,14 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
+const GithubUser = require('../lib/models/GithubUser');
 
-// jest.mock('../lib/utils/github');
+jest.mock('../lib/utils/github');
+
+const mockUser = {
+  username: 'my name',
+  email: 'someemail@gmail.com',
+};
 
 describe('gitty routes', () => {
   beforeEach(() => {
@@ -13,6 +19,7 @@ describe('gitty routes', () => {
   afterAll(() => {
     pool.end();
   });
+
   it('should redirect to the github oauth page upon login', async () => {
     const req = await request(app).get('/api/v1/github/login');
 
@@ -21,19 +28,23 @@ describe('gitty routes', () => {
     );
   });
 
-  it('should login and redirect users to /api/v1/github/post', async () => {
-    const req = await request
+  it('should login and redirect users to /api/v1/posts', async () => {
+    const res = await request
       .agent(app)
       .get('/api/v1/github/login/callback?code=42')
       .redirects(1);
 
-    expect(req.body).toEqual({
-      id: expect.any(String),
-      username: 'fake_github_user',
-      email: 'not-real@example.com',
-      avatar: expect.any(String),
-      iat: expect.any(Number),
-      exp: expect.any(Number),
+    expect(res.redirects[0]).toContain('/api/v1/posts');
+  });
+  it('deletes user on the delete route for user', async () => {
+    const agent = request.agent(app);
+
+    await agent.post('/api/v1/github/login').send();
+    const signOutResponse = await agent.delete('/api/v1/github');
+
+    expect(signOutResponse.body).toEqual({
+      success: true,
+      message: 'Signed out successfully!',
     });
   });
 });
