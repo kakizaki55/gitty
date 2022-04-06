@@ -34,13 +34,10 @@ describe('gitty routes', () => {
       .get('/api/v1/github/login/callback?code=42')
       .redirects(1);
 
-    console.log('req.location', res.redirects);
-
-    expect(res.redirects[0]).toContain(`/api/v1/posts`);
+    expect(res.redirects[0]).toContain('/api/v1/posts');
   });
   it('deletes user on the delete route for user', async () => {
     const agent = request.agent(app);
-    await GithubUser.insert(mockUser);
 
     await agent.post('/api/v1/github/login').send();
     const signOutResponse = await agent.delete('/api/v1/github');
