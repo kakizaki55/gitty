@@ -12,14 +12,13 @@ describe('gitty routes', () => {
     pool.end();
   });
 
-  it.only('get 3 different quotes from 3 different APIs', async () => {
+  it('get 3 different quotes from 3 different APIs', async () => {
     const expected = [
       { author: expect.any(String), content: expect.any(String) },
       { author: expect.any(String), content: expect.any(String) },
       { author: expect.any(String), content: expect.any(String) },
     ];
     const response = await request(app).get('/api/v1/quotes');
-    console.log('response', response);
     expect(response.body).toEqual(expected);
   });
 });
