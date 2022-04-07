@@ -2,18 +2,8 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-const GithubUser = require('../lib/models/GithubUser');
 
-jest.mock('../lib/middleware/auth.js', () => {
-  return (req, res, next) => {
-    req.user = {
-      email: 'not-real@example.com',
-      username: 'fake_github_user',
-      avatar: 'https://www.placecage.com/gif/300/300',
-    };
-    next();
-  };
-});
+jest.mock('../lib/utils/github.js');
 
 describe('gitty routes', () => {
   beforeEach(() => {
@@ -25,12 +15,13 @@ describe('gitty routes', () => {
   });
 
   it('makes a post as long as you are logged in', async () => {
-    await GithubUser.insert({
-      username: 'fake_github_user',
-      avatar: 'https://www.placecage.com/gif/300/300',
-    });
+    const agent = request.agent(app);
 
-    return await request(app)
+    await agent
+      .get('/api/v1/github/login/callback?code=MOCK_CODE')
+      .redirects(1);
+
+    return agent
       .post('/api/v1/posts')
       .send({ text: 'yoyo im kaing a tweet' })
       .then((res) => {
@@ -42,16 +33,17 @@ describe('gitty routes', () => {
       });
   });
   it('gets a list of all the gittys', async () => {
-    await GithubUser.insert({
-      username: 'fake_github_user',
-      avatar: 'https://www.placecage.com/gif/300/300',
-    });
+    const agent = request.agent(app);
 
-    await request(app)
+    await agent
+      .get('/api/v1/github/login/callback?code=MOCK_CODE')
+      .redirects(1);
+
+    await agent
       .post('/api/v1/posts')
       .send({ text: 'here is another test gitty' });
 
-    const response = await request(app).get('/api/v1/posts');
+    const response = await agent.get('/api/v1/posts');
 
     expect(response.body).toEqual([
       {
